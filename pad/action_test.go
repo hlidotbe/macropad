@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"testing"
+	"time"
 )
 
 type testActionCommandBuilder struct{}
@@ -43,6 +44,34 @@ func TestExecute_Macro(t *testing.T) {
 		t.Errorf("Should have passed, got: %s instead", r.Notify)
 	}
 
+}
+
+func TestExecute_Pomodoro(t *testing.T) {
+	out := make(chan byte, 100)
+	a := NewAction(ActionPomodoro, time.Millisecond, out)
+	r := a.Execute()
+	if !r.Success {
+		t.Errorf("Should have passed, got: '%s' instead", r.Notify)
+		return
+	}
+	time.Sleep(time.Millisecond * 10)
+	if len(out) != 100 {
+		t.Error("Pomodoro probably didn't start")
+	}
+	for i := 0; i < len(out); i++ {
+		<-out
+	}
+	a.Execute()
+	time.Sleep(time.Millisecond / 100)
+	r = a.Execute()
+	if !r.Success {
+		t.Errorf("Should have passed, got: '%s' instead", r.Notify)
+		return
+	}
+	time.Sleep(time.Millisecond * 10)
+	if len(out) >= 100 {
+		t.Error("Pomodoro continued")
+	}
 }
 
 func TestExecute_Invalid(t *testing.T) {

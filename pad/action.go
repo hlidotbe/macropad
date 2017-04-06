@@ -1,6 +1,9 @@
 package pad
 
-import "os/exec"
+import (
+	"os/exec"
+	"time"
+)
 
 type actionCommandBuilder interface {
 	Build(string, ...string) *exec.Cmd
@@ -51,6 +54,9 @@ func NewAction(k string, args ...interface{}) Action {
 		return a
 	case ActionPomodoro:
 		a := new(actionPomodoro)
+		d := args[0].(time.Duration)
+		c := args[1].(chan byte)
+		a.pomodoro = NewPomodoro(d, c)
 		return a
 	}
 	return nil
@@ -91,5 +97,10 @@ type actionPomodoro struct {
 }
 
 func (a *actionPomodoro) Execute() ActionResult {
-	return ActionResult{Success: false}
+	if a.pomodoro.IsRunning() {
+		a.pomodoro.Cancel()
+	} else {
+		a.pomodoro.Start()
+	}
+	return ActionResult{Success: true}
 }
