@@ -5,18 +5,18 @@ import "time"
 // A Pomodoro implements a ticker and send its progress on a given channel
 type Pomodoro struct {
 	duration time.Duration
-	tick     time.Duration
 	output   chan<- byte
 	cancel   chan bool
 	ticker   *time.Ticker
 	counter  byte
+	running  bool
 }
 
-func NewPomodoro(d time.Duration, t time.Duration, out chan<- byte) *Pomodoro {
+func NewPomodoro(d time.Duration, out chan<- byte) *Pomodoro {
 	p := new(Pomodoro)
 	p.duration = d
-	p.tick = t
 	p.output = out
+	p.running = false
 	return p
 }
 
@@ -24,14 +24,21 @@ func NewPomodoro(d time.Duration, t time.Duration, out chan<- byte) *Pomodoro {
 func (p *Pomodoro) Start() {
 	p.counter = 0
 	p.cancel = make(chan bool, 1)
-	p.ticker = time.NewTicker(p.tick)
+	p.ticker = time.NewTicker(p.duration / 100)
+	p.running = true
 	go p.handleTicker()
 }
 
 // Cancel the operation
 func (p *Pomodoro) Cancel() {
 	p.ticker.Stop()
+	p.running = false
 	p.cancel <- true
+}
+
+// IsRunning returns true if the ticker is running
+func (p *Pomodoro) IsRunning() bool {
+	return p.running
 }
 
 func (p *Pomodoro) handleTicker() {
@@ -40,6 +47,9 @@ func (p *Pomodoro) handleTicker() {
 		case <-p.ticker.C:
 			p.output <- p.counter
 			p.counter += 1
+			if p.counter >= 100 {
+				p.Cancel()
+			}
 			break
 		case <-p.cancel:
 			return

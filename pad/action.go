@@ -49,6 +49,9 @@ func NewAction(k string, args ...interface{}) Action {
 		}
 		a.args = strArgs
 		return a
+	case ActionPomodoro:
+		a := new(actionPomodoro)
+		return a
 	}
 	return nil
 }
@@ -81,4 +84,12 @@ func (a *actionMacro) Execute() ActionResult {
 	}
 
 	return ActionResult{Success: true}
+}
+
+type actionPomodoro struct {
+	pomodoro *Pomodoro
+}
+
+func (a *actionPomodoro) Execute() ActionResult {
+	return ActionResult{Success: false}
 }

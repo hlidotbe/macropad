@@ -6,19 +6,19 @@ import (
 )
 
 func TestPomodoroStart(t *testing.T) {
-	const expectedTicks = 50
+	const expectedTicks = 100
 
 	ticks := make(chan byte, expectedTicks)
-	p := NewPomodoro(time.Millisecond/2, time.Millisecond/100.0, ticks)
+	p := NewPomodoro(time.Millisecond, ticks)
 
 	p.Start()
-	time.Sleep(time.Millisecond * 1)
+	time.Sleep(time.Millisecond * 2)
 	if len(ticks) != expectedTicks {
 		t.Errorf("Expected %d ticks, got %d", expectedTicks, len(ticks))
 		return
 	}
 	var i byte
-	for i = 0; i < 50; i++ {
+	for i = 0; i < expectedTicks; i++ {
 		b := <-ticks
 		if b != i {
 			t.Errorf("Expected tick %d to be %d but got %d", i, i, b)
@@ -28,15 +28,15 @@ func TestPomodoroStart(t *testing.T) {
 }
 
 func TestPomodoroCancel(t *testing.T) {
-	const maxTicks = 50
+	const maxTicks = 100
 
 	ticks := make(chan byte, maxTicks)
-	p := NewPomodoro(time.Millisecond/2, time.Millisecond/100, ticks)
+	p := NewPomodoro(time.Millisecond, ticks)
 
 	p.Start()
 	time.Sleep(time.Millisecond / 10)
 	p.Cancel()
-	time.Sleep(time.Millisecond / 2)
+	time.Sleep(time.Millisecond * 2)
 	if len(ticks) > maxTicks {
 		t.Errorf("Expected less than %d ticks, got %d", maxTicks, len(ticks))
 		return
