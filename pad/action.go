@@ -1,6 +1,7 @@
 package pad
 
 import (
+	"fmt"
 	"os/exec"
 	"time"
 )
@@ -30,34 +31,28 @@ const (
 
 // Action describe what a keypress should do
 type Action interface {
-	Execute() ActionResult
+	Execute() error
 }
 
 // NewAction creates an action with the given k(ind) and d(ata)
-func NewAction(k string, args ...interface{}) Action {
-	switch k {
+func NewAction(kind string, name string, out chan<- ActionMessage, args ...interface{}) Action {
+	switch kind {
 	case ActionType:
-		a := new(actionType)
 		strArgs := make([]string, len(args))
 		for i, v := range args {
 			strArgs[i] = v.(string)
 		}
-		a.args = strArgs
-		return a
+		return newActionType(name, out, strArgs...)
 	case ActionMacro:
-		a := new(actionMacro)
-		strArgs := make([]string, len(args))
-		for i, v := range args {
+		displayOutput := args[0].(bool)
+		strArgs := make([]string, len(args)-1)
+		for i, v := range args[1:] {
 			strArgs[i] = v.(string)
 		}
-		a.args = strArgs
-		return a
+		return newActionMacro(name, out, displayOutput, strArgs...)
 	case ActionPomodoro:
-		a := new(actionPomodoro)
 		d := args[0].(time.Duration)
-		c := args[1].(chan byte)
-		a.pomodoro = NewPomodoro(d, c)
-		return a
+		return newActionPomodoro(name, out, d)
 	}
 	return nil
 }
@@ -65,42 +60,102 @@ func NewAction(k string, args ...interface{}) Action {
 // Concrete actions
 
 type actionType struct {
+	name string
+	out  chan<- ActionMessage
 	args []string
 }
 
-func (a *actionType) Execute() ActionResult {
+func newActionType(name string, out chan<- ActionMessage, args ...string) *actionType {
+	a := new(actionType)
+	a.name = name
+	a.out = out
+	a.args = args
+	return a
+}
+
+func (a *actionType) Execute() error {
 	cmd := builder.Build("cliclick", a.args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return ActionResult{Success: false, Notify: string(out)}
+		return fmt.Errorf("%s (%v)", string(out), err)
 	}
-
-	return ActionResult{Success: true}
+	return nil
 }
 
 type actionMacro struct {
-	args []string
+	name          string
+	out           chan<- ActionMessage
+	displayOutput bool
+	args          []string
 }
 
-func (a *actionMacro) Execute() ActionResult {
+func newActionMacro(name string, out chan<- ActionMessage, display bool, args ...string) *actionMacro {
+	a := new(actionMacro)
+	a.name = name
+	a.out = out
+	a.displayOutput = display
+	a.args = args
+	return a
+}
+
+func (a *actionMacro) Execute() error {
 	cmd := builder.Build(a.args[0], a.args[1:]...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return ActionResult{Success: false, Notify: string(out)}
+		return fmt.Errorf("%s (%v)", string(out), err)
 	}
-
-	return ActionResult{Success: true}
+	if a.displayOutput {
+		a.out <- ActionMessage{ActionName: a.name, Notify: string(out), State: false}
+	}
+	return nil
 }
 
 type actionPomodoro struct {
+	name     string
+	out      chan<- ActionMessage
 	pomodoro *Pomodoro
+	progress chan byte
 }
 
-func (a *actionPomodoro) Execute() ActionResult {
+func newActionPomodoro(name string, out chan<- ActionMessage, duration time.Duration) *actionPomodoro {
+	a := new(actionPomodoro)
+	a.name = name
+	a.out = out
+	a.progress = make(chan byte, 100)
+	go a.readProgress()
+	a.pomodoro = NewPomodoro(duration, a.progress)
+	return a
+}
+
+func (a *actionPomodoro) Execute() error {
 	if a.pomodoro.IsRunning() {
 		a.pomodoro.Cancel()
 	} else {
 		a.pomodoro.Start()
 	}
-	return ActionResult{Success: true}
+	return nil
+}
+
+func (a *actionPomodoro) readProgress() {
+	for {
+		p, more := <-a.progress
+		if more {
+			a.out <- ActionMessage{ActionName: a.name, Progress: p, State: true}
+		} else {
+			// channel closed, let's go
+			return
+		}
+	}
+}
+
+// ActionMessage is sent by the Action on the side channel when an asynchronous operation happens
+type ActionMessage struct {
+	// ActionName can be used to lookup the sending Action
+	ActionName string
+	// Notify the user of something
+	Notify string
+	// State of the Action
+	State bool
+	// Progress of the Action when relevant (e.g. ActionPomodoro)
+	Progress byte
 }

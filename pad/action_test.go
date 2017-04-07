@@ -25,10 +25,14 @@ func TestExecute_Type(t *testing.T) {
 
 	builder = testActionCommandBuilder{}
 
-	a := NewAction(ActionType, "t:git", "kp:space", "t:epic", "kp:space", "t:live", "kp:enter")
-	r := a.Execute()
-	if !r.Success {
-		t.Errorf("Should have passed, got: %s instead", r.Notify)
+	com := make(chan ActionMessage, 1)
+	a := NewAction(ActionType, "K1", com, "t:git", "kp:space", "t:epic", "kp:space", "t:live", "kp:enter")
+	err := a.Execute()
+	if err != nil {
+		t.Errorf("Should have passed, got: \"%v\" instead", err)
+	}
+	if len(com) != 0 {
+		t.Errorf("Did not expect a message from ActionType, got %v", <-com)
 	}
 }
 
@@ -38,20 +42,36 @@ func TestExecute_Macro(t *testing.T) {
 
 	builder = testActionCommandBuilder{}
 
-	a := NewAction(ActionMacro, "open", "https://track.epic.net")
-	r := a.Execute()
-	if !r.Success {
-		t.Errorf("Should have passed, got: %s instead", r.Notify)
+	com := make(chan ActionMessage, 1)
+	a := NewAction(ActionMacro, "K1", com, false, "open", "https://track.epic.net")
+	err := a.Execute()
+	if err != nil {
+		t.Errorf("Should have passed, got: \"%s\" instead", err)
 	}
-
+	if len(com) != 0 {
+		t.Errorf("Did not expect a message from ActionType, got %v", <-com)
+	}
+	a = NewAction(ActionMacro, "K1", com, true, "echo", "test")
+	err = a.Execute()
+	if err != nil {
+		t.Errorf("Should have passed, got: \"%s\" instead", err)
+	}
+	if len(com) != 1 {
+		t.Errorf("Got no notification from action")
+		return
+	}
+	msg := <-com
+	if msg.Notify != "[test]\n" {
+		t.Errorf("Expected '[test]' got '%v'", msg.Notify)
+	}
 }
 
 func TestExecute_Pomodoro(t *testing.T) {
-	out := make(chan byte, 100)
-	a := NewAction(ActionPomodoro, time.Millisecond, out)
-	r := a.Execute()
-	if !r.Success {
-		t.Errorf("Should have passed, got: '%s' instead", r.Notify)
+	out := make(chan ActionMessage, 100)
+	a := NewAction(ActionPomodoro, "K1", out, time.Millisecond)
+	err := a.Execute()
+	if err != nil {
+		t.Errorf("Should have passed, got: '%v' instead", err)
 		return
 	}
 	time.Sleep(time.Millisecond * 10)
@@ -63,9 +83,9 @@ func TestExecute_Pomodoro(t *testing.T) {
 	}
 	a.Execute()
 	time.Sleep(time.Millisecond / 100)
-	r = a.Execute()
-	if !r.Success {
-		t.Errorf("Should have passed, got: '%s' instead", r.Notify)
+	err = a.Execute()
+	if err != nil {
+		t.Errorf("Should have passed, got: '%v' instead", err)
 		return
 	}
 	time.Sleep(time.Millisecond * 10)
@@ -75,7 +95,7 @@ func TestExecute_Pomodoro(t *testing.T) {
 }
 
 func TestExecute_Invalid(t *testing.T) {
-	a := NewAction("invalid", nil)
+	a := NewAction("invalid", "K1", make(chan ActionMessage))
 	if a != nil {
 		t.Error("Invalid action should not yield a value")
 	}
@@ -117,5 +137,10 @@ func TestHelperProcess(*testing.T) {
 	case "open":
 		os.Exit(0)
 		break
+	case "echo":
+		fmt.Println(args)
+		os.Exit(0)
+		break
+
 	}
 }

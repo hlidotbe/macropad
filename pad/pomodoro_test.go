@@ -9,10 +9,10 @@ func TestPomodoroStart(t *testing.T) {
 	const expectedTicks = 100
 
 	ticks := make(chan byte, expectedTicks)
-	p := NewPomodoro(time.Millisecond, ticks)
+	p := NewPomodoro(time.Millisecond*100, ticks)
 
 	p.Start()
-	time.Sleep(time.Millisecond * 2)
+	time.Sleep(time.Millisecond * 200)
 	if len(ticks) != expectedTicks {
 		t.Errorf("Expected %d ticks, got %d", expectedTicks, len(ticks))
 		return
