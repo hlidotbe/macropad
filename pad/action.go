@@ -10,12 +10,16 @@ type actionCommandBuilder interface {
 	Build(string, ...string) *exec.Cmd
 }
 
-var builder actionCommandBuilder
-
 type realBuilder struct{}
 
 func (r realBuilder) Build(name string, arg ...string) *exec.Cmd {
 	return exec.Command(name, arg...)
+}
+
+var builder actionCommandBuilder
+
+func init() {
+	builder = &realBuilder{}
 }
 
 const (
