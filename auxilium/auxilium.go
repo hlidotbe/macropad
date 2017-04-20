@@ -29,7 +29,10 @@ type Client struct {
 	// Identifier used for requesting token and communicating with the API
 	ApplicationIdentifier string
 
+	// Login service
 	Login *LoginService
+	// TimeTrack service
+	TimeTrack *TimeTrackService
 }
 
 // NewClient return a new Auxlium API Client. If a nil httpClient is
@@ -41,6 +44,7 @@ func NewClient(httpClient *http.Client, token string, baseURL string) *Client {
 	}
 	c := &Client{client: httpClient, token: token, ApplicationIdentifier: applicationIdentifier}
 	c.Login = &LoginService{client: c}
+	c.TimeTrack = &TimeTrackService{client: c}
 	c.SetBaseURL(baseURL)
 	return c
 }
