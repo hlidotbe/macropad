@@ -1,6 +1,9 @@
 package pad
 
-import "time"
+import (
+	"log"
+	"time"
+)
 
 // A Pomodoro implements a ticker and send its progress on a given channel
 type Pomodoro struct {
@@ -12,6 +15,7 @@ type Pomodoro struct {
 	running  bool
 }
 
+// NewPomodoro creates a pomodoro timer
 func NewPomodoro(d time.Duration, out chan<- byte) *Pomodoro {
 	p := new(Pomodoro)
 	p.duration = d
@@ -34,6 +38,7 @@ func (p *Pomodoro) Cancel() {
 	p.ticker.Stop()
 	p.running = false
 	p.cancel <- true
+	log.Println("Pomodoro done")
 }
 
 // IsRunning returns true if the ticker is running
@@ -46,12 +51,14 @@ func (p *Pomodoro) handleTicker() {
 		select {
 		case <-p.ticker.C:
 			p.output <- p.counter
-			p.counter += 1
-			if p.counter >= 100 {
+			p.counter++
+			if p.counter > 100 {
 				p.Cancel()
 			}
 			break
 		case <-p.cancel:
+			close(p.cancel)
+			close(p.output)
 			return
 		}
 	}

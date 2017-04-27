@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"log"
+	"os/exec"
 	"strings"
 )
 
@@ -39,18 +41,14 @@ func (o *Orchestrator) Run() {
 	for {
 		select {
 		case line = <-o.input:
-			if line[len(line)-1] == '1' {
-				continue
-			}
-			fmt.Printf("Got: %s\n", line)
-			a := o.actions[line[0:len(line)-1]]
-			if a == nil {
-				continue
-			}
-			a.Execute()
+			go o.executeAction(line)
 			break
 		case msg = <-o.Com:
-			fmt.Printf("Msg: %s", msg.ActionName)
+			go o.notifyIfNeeded(msg)
+			o.updateState(msg)
+			if IsAProgressAction(o.actions[msg.ActionName]) {
+				o.updateProgress(msg)
+			}
 			break
 		case <-o.done:
 			close(o.Com)
@@ -78,4 +76,47 @@ func (o *Orchestrator) readLines() {
 // RegisterAction for given key
 func (o *Orchestrator) RegisterAction(key string, a Action) {
 	o.actions[key] = a
+}
+
+func (o *Orchestrator) notifyIfNeeded(msg ActionMessage) {
+	if len(msg.Notify) == 0 {
+		return
+	}
+	cmd := exec.Command("terminal-notifier", "-message", msg.Notify, "-timeout", "2")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("%s (%v)\n", string(out), err)
+	}
+}
+
+func (o *Orchestrator) executeAction(line string) {
+	if line[len(line)-1] == '1' {
+		return
+	}
+	log.Printf("Got: %s\n", line)
+	a := o.actions[line[0:len(line)-1]]
+	if a == nil {
+		return
+	}
+	err := a.Execute()
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func (o *Orchestrator) updateState(msg ActionMessage) {
+	if msg.State == 0 {
+		return
+	}
+	if msg.State == 1 {
+		o.serialOut.Write([]byte(fmt.Sprintf("%s1\n", msg.ActionName)))
+	} else {
+		o.serialOut.Write([]byte(fmt.Sprintf("%s0\n", msg.ActionName)))
+	}
+	log.Printf("Sent: %s%d\n", msg.ActionName, msg.State)
+}
+
+func (o *Orchestrator) updateProgress(msg ActionMessage) {
+	o.serialOut.Write([]byte(fmt.Sprintf("%s-%d\n", strings.Replace(msg.ActionName, "K", "P", 1), msg.Progress)))
+	log.Printf(fmt.Sprintf("%s-%d\n", strings.Replace(msg.ActionName, "K", "P", 1), msg.Progress))
 }
