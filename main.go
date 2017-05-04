@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -11,12 +12,12 @@ import (
 	"strings"
 	"time"
 
+	serial "go.bug.st/serial.v1"
+
 	rice "github.com/GeertJohan/go.rice"
+	"github.com/ghodss/yaml"
 	"github.com/hlidotbe/macropad/auxilium"
 	"github.com/hlidotbe/macropad/pad"
-	"github.com/smallfish/simpleyaml"
-
-	serial "go.bug.st/serial.v1"
 )
 
 type rw struct {
@@ -34,8 +35,18 @@ func (s *rw) Write(p []byte) (n int, err error) {
 	return n, err
 }
 
+type actionConfig struct {
+	Type          string   `json:"type"`
+	ID            int      `json:"id"`             // For Track actions
+	Label         string   `json:"label"`          // For Track actions
+	Profile       string   `json:"profile"`        // For Track actions
+	DisplayOutput bool     `json:"display_output"` // For Macro actions
+	Args          []string `json:"args"`           // For Type and Macro actions
+	Duration      int      `json:"duration"`       // For Pomodoro actions
+}
+
 var auxiliumClient *auxilium.Client
-var config *simpleyaml.Yaml
+var config *map[string]*actionConfig
 var orch *pad.Orchestrator
 
 func main() {
@@ -47,7 +58,7 @@ func main() {
 
 	auxiliumClient = auxilium.NewClient(nil, os.Getenv("AUXILIUM_TOKEN"), "https://track.epic.net/api")
 
-	orch = pad.NewOchestrator(*port)
+	orch = pad.NewOchestrator(port)
 	setupKeys()
 
 	orch.Run()
@@ -59,7 +70,7 @@ func setupHTTP() {
 	log.Fatal(http.ListenAndServe(":6276", nil))
 }
 
-func loadConfig() *simpleyaml.Yaml {
+func loadConfig() *map[string]*actionConfig {
 	u, err := user.Current()
 	if err != nil {
 		log.Fatal(err)
@@ -75,14 +86,16 @@ func loadConfig() *simpleyaml.Yaml {
 	if _, err = file.Read(buf); err != nil {
 		log.Fatal(err)
 	}
-	y, err := simpleyaml.NewYaml(buf)
+	cfg := new(map[string]*actionConfig)
+	err = yaml.Unmarshal(buf, cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return y
+	return cfg
 }
 
-func openPort() *serial.Port {
+//*
+func openPort() serial.Port {
 	ports, err := serial.GetPortsList()
 	if err != nil {
 		log.Fatal(err)
@@ -103,46 +116,52 @@ func openPort() *serial.Port {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &port
+	return port
 }
 
+//*/
+/*
+func openPort() io.ReadWriter {
+	return &rw{in: os.Stdin, out: os.Stdout}
+}
+
+//*/
+
 func setupKeys() {
-	m, _ := config.Map()
-	for k, v := range m {
-		key := k.(string)
-		prop := v.(map[interface{}]interface{})
-		typ := prop["type"].(string)
-		switch typ {
+	for key, ac := range *config {
+		switch ac.Type {
 		case "Track":
-			orch.RegisterAction(key, pad.NewActionTrack(key, orch.Com, auxiliumClient, prop["label"].(string), prop["id"].(int), prop["profile"].(string)))
+			orch.RegisterAction(key, pad.NewActionTrack(key, orch.Com, auxiliumClient, ac.Label, ac.ID, ac.Profile))
 			break
 		case "Type":
-			argsi := prop["args"].([]interface{})
-			args := make([]string, len(argsi))
-			for i, v := range argsi {
-				args[i] = v.(string)
-			}
-			orch.RegisterAction(key, pad.NewActionType(key, orch.Com, args...))
+			orch.RegisterAction(key, pad.NewActionType(key, orch.Com, ac.Args...))
 			break
 		case "Macro":
-			argsi := prop["args"].([]interface{})
-			args := make([]string, len(argsi))
-			for i, v := range argsi {
-				args[i] = v.(string)
-			}
-			orch.RegisterAction(key, pad.NewActionMacro(key, orch.Com, prop["display_output"].(bool), args...))
+			orch.RegisterAction(key, pad.NewActionMacro(key, orch.Com, ac.DisplayOutput, ac.Args...))
 			break
 		case "Pomodoro":
-			orch.RegisterAction(key, pad.NewActionPomodoro(key, orch.Com, time.Duration(prop["duration"].(int))*time.Minute))
+			orch.RegisterAction(key, pad.NewActionPomodoro(key, orch.Com, time.Duration(ac.Duration)*time.Minute))
 			break
 		}
-		log.Printf("%v: %v\n", k, v)
+		log.Printf("%v: %v\n", key, ac)
 	}
 }
 
 func handleKeys(response http.ResponseWriter, request *http.Request) {
+	k := request.URL.Query()["k"][0]
 	if request.Method == "GET" {
-
+		ac := (*config)[k]
+		if ac == nil {
+			response.WriteHeader(404)
+			return
+		}
+		bytes, _ := json.Marshal(ac)
+		response.Write(bytes)
 	} else {
+		ac := (*config)[k]
+		if ac != nil {
+			// TODO: Unregister action
+		}
+		(*config)[k] = nil
 	}
 }

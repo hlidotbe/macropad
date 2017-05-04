@@ -49,20 +49,351 @@
           <h3 class="panel-title">Macropad configuration</h3>
         </div>
         <div class="panel-body">
-          <ul class="keys">
-            <li>K1</li>
-            <li>K2</li>
-            <li>K3</li>
-            <li>K4</li>
-            <li>K5</li>
-          </ul>
-          <ul class="keys">
-            <li>K6</li>
-            <li>K7</li>
-            <li>K8</li>
-            <li>K9</li>
-            <li>K10</li>
-          </ul>
+          <div class="row">
+            <div class="col-sm-12">
+              <ul class="keys">
+                <li>K0</li>
+                <li>K1</li>
+                <li>K2</li>
+                <li>K3</li>
+                <li>K4</li>
+              </ul>
+              <ul class="keys">
+                <li>K5</li>
+                <li>K6</li>
+                <li>K7</li>
+                <li>K8</li>
+                <li>K9</li>
+              </ul>
+            </div>
+          </div>
+          <form>
+            <div class="row">
+              <div class="col-md-6" id="base">
+                <h4>Base</h4>
+                <div class="form-group">
+                  <label for="base_type">Type</label>
+                  <select id="base_type" class="form-control" name="base_type">
+                    <option value=""></option>
+                    <option value="Track">Track</option>
+                    <option value="Type">Type</option>
+                    <option value="Macro">Macro</option>
+                    <option value="Pomodoro">Pomodoro</option>
+                  </select>
+                </div>
+                <div class="form-group onlyfor onlyfor-track">
+                  <label for="base_id">Project</label>
+                  <select id="base_id" name="base_id" class="form-control">
+                    <option value="292">Anthe / Regie</option>
+                    <option value="305">Auro-3D / Régie</option>
+                    <option value="293">Azimut Events International / regie</option>
+                    <option value="212">BADGER Pellets / Régie</option>
+                    <option value="294">BaMM / regie</option>
+                    <option value="128">BCO / Régie</option>
+                    <option value="227">BEA / Refonte site 2016</option>
+                    <option value="260">BEA / Regie</option>
+                    <option value="151">Bellerine / Etiquette</option>
+                    <option value="309">Beobank / Animation credit card visa 2017</option>
+                    <option value="308">Beobank / Newsletter template 2017</option>
+                    <option value="306">Beobank / Régie</option>
+                    <option value="319">Beobank / Single page Master Card extra world</option>
+                    <option value="255">BIO SOHAN / Régie</option>
+                    <option value="273">Bloom / Régie</option>
+                    <option value="77">Carrelages Discount / regie</option>
+                    <option value="295">CHC Saint-Joseph / regie</option>
+                    <option value="11">Chocol@ / Regie</option>
+                    <option value="160">CHU Radiothérapie / Regie</option>
+                    <option value="182">Cible / régie</option>
+                    <option value="296">Clinique André Renard / regie</option>
+                    <option value="181">Combien tes lentilles / Régie</option>
+                    <option value="33">Com On / Régie</option>
+                    <option value="280">Crop Trust / Alfresco</option>
+                    <option value="310">Crop Trust / Annual Report 2016</option>
+                    <option value="320">Crop Trust / Coffee video</option>
+                    <option value="199">Crop Trust / CWR Regie</option>
+                    <option value="216">Crop Trust / CWR Translations</option>
+                    <option value="304">Crop Trust / Food Forever branding</option>
+                    <option value="313">Crop Trust / Food Forever website</option>
+                    <option value="314">Crop Trust / Printed Annual report 2016</option>
+                    <option value="139">Crop Trust / Régie</option>
+                    <option value="236">CSC / Régie</option>
+                    <option value="73">Darcis / Regie</option>
+                    <option value="31">Dawance / Dawance Régie</option>
+                    <option value="23">Delhez / Delhez régie</option>
+                    <option value="57">Devillers / Regie</option>
+                    <option value="225">DFM immo / Régie</option>
+                    <option value="126">D'ici / Régie</option>
+                    <option value="135">Docteur Bourdon / Régie </option>
+                    <option value="143">EBA / Eloy régie</option>
+                    <option value="318">Eloy Water / Caraibes</option>
+                    <option value="6">Eloy Water / Eloy-Water Régie</option>
+                    <option value="279">Eloy Water / NL</option>
+                    <option value="28">EPIC / Administratif</option>
+                    <option value="4">EPIC / Auxilium</option>
+                    <option value="22">EPIC / Babel</option>
+                    <option value="47">EPIC / Commercial</option>
+                    <option value="150">EPIC / Epic Website 2015</option>
+                    <option value="1">EPIC / General</option>
+                    <option value="187">EPIC / infrastructure</option>
+                    <option value="268">EPIC / IT</option>
+                    <option value="53">EPIC / Management</option>
+                    <option value="17">Epic Stories / V1</option>
+                    <option value="96">Espace Vin Pirard / Régie</option>
+                    <option value="10">Etilux / Régie</option>
+                    <option value="297">EUA / regie</option>
+                    <option value="298">Euro Plantes / regie</option>
+                    <option value="316">EVS / NAB 2017</option>
+                    <option value="93">EVS / Régie et maintenance</option>
+                    <option value="238">EXKi / Régie</option>
+                    <option value="76">Flowell / Régie</option>
+                    <option value="284">Horizon Groupe / Refonte site 2017</option>
+                    <option value="72">Horizon Groupe / Régie</option>
+                    <option value="25">Ice-Watch / Régie</option>
+                    <option value="172">ICM / Regie</option>
+                    <option value="45">jjjy asbl / jjjy</option>
+                    <option value="283">Kensu / Identite visuelle</option>
+                    <option value="329">Kensu / Régie</option>
+                    <option value="84">Kitozyme / Kitozyme régie</option>
+                    <option value="123">Knewledge / Knewledge regie</option>
+                    <option value="138">Lampiris / Regie</option>
+                    <option value="200">Lampiris Wood SA / Régie</option>
+                    <option value="24">Leidgens / ERP</option>
+                    <option value="323">Leidgens / Refonte site 2017</option>
+                    <option value="5">Leidgens / Régie</option>
+                    <option value="274">LGG / Régie</option>
+                    <option value="250">LGG / Site 2016 - Phase I</option>
+                    <option value="193">Meusinvest / Régie</option>
+                    <option value="281">Mireille Tyberghein / De A à Z</option>
+                    <option value="262">Mireille Tyberghein / Identité graphique</option>
+                    <option value="272">Mireille Tyberghein / Miimosa</option>
+                    <option value="326">Mireille Tyberghein / Régie</option>
+                    <option value="170">Mobitec / Régie</option>
+                    <option value="152">My Winebox / Régie</option>
+                    <option value="263">Namy / Régie</option>
+                    <option value="119">Nutripharm / Regie</option>
+                    <option value="322">OncoDNA / Website</option>
+                    <option value="101">Pierre & Nature / Régie</option>
+                    <option value="303">Plenesses Club / regie</option>
+                    <option value="189">Poncelet Signalisation / regie</option>
+                    <option value="12">Quatuor / Regie</option>
+                    <option value="224">RMS8  / Régie </option>
+                    <option value="258">Scabal  / Régie</option>
+                    <option value="217">Schreder / Régie</option>
+                    <option value="300">Semauvert / regie</option>
+                    <option value="127">Senup / Regie</option>
+                    <option value="327">Serel / Déclinaison supports 2017</option>
+                    <option value="324">Serel / Logo et charte graphique 2017</option>
+                    <option value="211">Sharingbox / Régie</option>
+                    <option value="325">Sipal Partners / Refonte identités visuelles marques Meurens Natural</option>
+                    <option value="21">Sipal Partners / Régie</option>
+                    <option value="219">Stanley & Stella / Régie</option>
+                    <option value="167">Studio 100 / Studio 100 webshop Régie</option>
+                    <option value="226">Syma Stones / Régie</option>
+                    <option value="35">Table ronde / Régie</option>
+                    <option value="301">Thierry Peiffer / regie</option>
+                    <option value="257">Traitex / Régie</option>
+                    <option value="317">UITP / Optimisation</option>
+                    <option value="289">UITP / Program and website V2</option>
+                    <option value="264">UITP / Refonte site </option>
+                    <option value="290">UITP / Régie</option>
+                    <option value="286">ULg / Refonte UX 2017</option>
+                    <option value="321">ULg / Régie</option>
+                    <option value="302">Villa Pierrefleur / regie</option>
+                    <option value="188">Vincent Piront / Regie</option>
+                    <option value="244">Young adventurers / Young Adventurers - Régie</option>
+                  </select>
+                </div>
+                <div class="form-group onlyfor onlyfor-track">
+                  <label for="base_profile">Profile</label>
+                  <select id="base_profile" name="base_profile" class="form-control">
+                    <option value="pm">pm</option>
+                    <option value="admin">admin</option>
+                    <option value="commercial">commercial</option>
+                    <option value="design">design</option>
+                    <option value="slicing">slicing</option>
+                    <option value="integration">integration</option>
+                    <option value="frontend">frontend</option>
+                    <option value="backend">backend</option>
+                    <option value="other">other</option>
+                    <option value="meeting">meeting</option>
+                  </select>
+                </div>
+                <div class="form-group onlyfor onlyfor-macro"><label for="base_display_output"><input id="base_display_output" type="checkbox" name="base_display_outout"> Display output?</label></div>
+                <div class="form-group onlyfor onlyfor-macro onlyfor-type">
+                  <label for="base_args">Arguments</label>
+                  <textarea id="base_args" name="base_args" class="form-control"></textarea>
+                </div>
+                <div class="form-group onlyfor onlyfor-pomodoro">
+                  <label for="base_duration">Duration</label>
+                  <input type="text" id="base_duration" class="form-control" name="base_duration" value="">
+                </div>
+              </div>
+              <div class="col-md-6" id="raised">
+                <h4>Raised</h4>
+                <div class="form-group">
+                  <label for="raised_type">Type</label>
+                  <select id="raised_type" class="form-control" name="raised_type">
+                    <option value=""></option>
+                    <option value="Track">Track</option>
+                    <option value="Type">Type</option>
+                    <option value="Macro">Macro</option>
+                    <option value="Pomodoro">Pomodoro</option>
+                  </select>
+                </div>
+                <div class="form-group onlyfor onlyfor-track">
+                  <label for="raised_id">Project</label>
+                  <select id="raised_id" name="raised_id" class="form-control">
+                    <option value="292">Anthe / Regie</option>
+                    <option value="305">Auro-3D / Régie</option>
+                    <option value="293">Azimut Events International / regie</option>
+                    <option value="212">BADGER Pellets / Régie</option>
+                    <option value="294">BaMM / regie</option>
+                    <option value="128">BCO / Régie</option>
+                    <option value="227">BEA / Refonte site 2016</option>
+                    <option value="260">BEA / Regie</option>
+                    <option value="151">Bellerine / Etiquette</option>
+                    <option value="309">Beobank / Animation credit card visa 2017</option>
+                    <option value="308">Beobank / Newsletter template 2017</option>
+                    <option value="306">Beobank / Régie</option>
+                    <option value="319">Beobank / Single page Master Card extra world</option>
+                    <option value="255">BIO SOHAN / Régie</option>
+                    <option value="273">Bloom / Régie</option>
+                    <option value="77">Carrelages Discount / regie</option>
+                    <option value="295">CHC Saint-Joseph / regie</option>
+                    <option value="11">Chocol@ / Regie</option>
+                    <option value="160">CHU Radiothérapie / Regie</option>
+                    <option value="182">Cible / régie</option>
+                    <option value="296">Clinique André Renard / regie</option>
+                    <option value="181">Combien tes lentilles / Régie</option>
+                    <option value="33">Com On / Régie</option>
+                    <option value="280">Crop Trust / Alfresco</option>
+                    <option value="310">Crop Trust / Annual Report 2016</option>
+                    <option value="320">Crop Trust / Coffee video</option>
+                    <option value="199">Crop Trust / CWR Regie</option>
+                    <option value="216">Crop Trust / CWR Translations</option>
+                    <option value="304">Crop Trust / Food Forever branding</option>
+                    <option value="313">Crop Trust / Food Forever website</option>
+                    <option value="314">Crop Trust / Printed Annual report 2016</option>
+                    <option value="139">Crop Trust / Régie</option>
+                    <option value="236">CSC / Régie</option>
+                    <option value="73">Darcis / Regie</option>
+                    <option value="31">Dawance / Dawance Régie</option>
+                    <option value="23">Delhez / Delhez régie</option>
+                    <option value="57">Devillers / Regie</option>
+                    <option value="225">DFM immo / Régie</option>
+                    <option value="126">D'ici / Régie</option>
+                    <option value="135">Docteur Bourdon / Régie </option>
+                    <option value="143">EBA / Eloy régie</option>
+                    <option value="318">Eloy Water / Caraibes</option>
+                    <option value="6">Eloy Water / Eloy-Water Régie</option>
+                    <option value="279">Eloy Water / NL</option>
+                    <option value="28">EPIC / Administratif</option>
+                    <option value="4">EPIC / Auxilium</option>
+                    <option value="22">EPIC / Babel</option>
+                    <option value="47">EPIC / Commercial</option>
+                    <option value="150">EPIC / Epic Website 2015</option>
+                    <option value="1">EPIC / General</option>
+                    <option value="187">EPIC / infrastructure</option>
+                    <option value="268">EPIC / IT</option>
+                    <option value="53">EPIC / Management</option>
+                    <option value="17">Epic Stories / V1</option>
+                    <option value="96">Espace Vin Pirard / Régie</option>
+                    <option value="10">Etilux / Régie</option>
+                    <option value="297">EUA / regie</option>
+                    <option value="298">Euro Plantes / regie</option>
+                    <option value="316">EVS / NAB 2017</option>
+                    <option value="93">EVS / Régie et maintenance</option>
+                    <option value="238">EXKi / Régie</option>
+                    <option value="76">Flowell / Régie</option>
+                    <option value="284">Horizon Groupe / Refonte site 2017</option>
+                    <option value="72">Horizon Groupe / Régie</option>
+                    <option value="25">Ice-Watch / Régie</option>
+                    <option value="172">ICM / Regie</option>
+                    <option value="45">jjjy asbl / jjjy</option>
+                    <option value="283">Kensu / Identite visuelle</option>
+                    <option value="329">Kensu / Régie</option>
+                    <option value="84">Kitozyme / Kitozyme régie</option>
+                    <option value="123">Knewledge / Knewledge regie</option>
+                    <option value="138">Lampiris / Regie</option>
+                    <option value="200">Lampiris Wood SA / Régie</option>
+                    <option value="24">Leidgens / ERP</option>
+                    <option value="323">Leidgens / Refonte site 2017</option>
+                    <option value="5">Leidgens / Régie</option>
+                    <option value="274">LGG / Régie</option>
+                    <option value="250">LGG / Site 2016 - Phase I</option>
+                    <option value="193">Meusinvest / Régie</option>
+                    <option value="281">Mireille Tyberghein / De A à Z</option>
+                    <option value="262">Mireille Tyberghein / Identité graphique</option>
+                    <option value="272">Mireille Tyberghein / Miimosa</option>
+                    <option value="326">Mireille Tyberghein / Régie</option>
+                    <option value="170">Mobitec / Régie</option>
+                    <option value="152">My Winebox / Régie</option>
+                    <option value="263">Namy / Régie</option>
+                    <option value="119">Nutripharm / Regie</option>
+                    <option value="322">OncoDNA / Website</option>
+                    <option value="101">Pierre & Nature / Régie</option>
+                    <option value="303">Plenesses Club / regie</option>
+                    <option value="189">Poncelet Signalisation / regie</option>
+                    <option value="12">Quatuor / Regie</option>
+                    <option value="224">RMS8  / Régie </option>
+                    <option value="258">Scabal  / Régie</option>
+                    <option value="217">Schreder / Régie</option>
+                    <option value="300">Semauvert / regie</option>
+                    <option value="127">Senup / Regie</option>
+                    <option value="327">Serel / Déclinaison supports 2017</option>
+                    <option value="324">Serel / Logo et charte graphique 2017</option>
+                    <option value="211">Sharingbox / Régie</option>
+                    <option value="325">Sipal Partners / Refonte identités visuelles marques Meurens Natural</option>
+                    <option value="21">Sipal Partners / Régie</option>
+                    <option value="219">Stanley & Stella / Régie</option>
+                    <option value="167">Studio 100 / Studio 100 webshop Régie</option>
+                    <option value="226">Syma Stones / Régie</option>
+                    <option value="35">Table ronde / Régie</option>
+                    <option value="301">Thierry Peiffer / regie</option>
+                    <option value="257">Traitex / Régie</option>
+                    <option value="317">UITP / Optimisation</option>
+                    <option value="289">UITP / Program and website V2</option>
+                    <option value="264">UITP / Refonte site </option>
+                    <option value="290">UITP / Régie</option>
+                    <option value="286">ULg / Refonte UX 2017</option>
+                    <option value="321">ULg / Régie</option>
+                    <option value="302">Villa Pierrefleur / regie</option>
+                    <option value="188">Vincent Piront / Regie</option>
+                    <option value="244">Young adventurers / Young Adventurers - Régie</option>
+                  </select>
+                </div>
+                <div class="form-group onlyfor onlyfor-track">
+                  <label for="raised_profile">Profile</label>
+                  <select id="raised_profile" name="raised_profile" class="form-control">
+                    <option value="pm">pm</option>
+                    <option value="admin">admin</option>
+                    <option value="commercial">commercial</option>
+                    <option value="design">design</option>
+                    <option value="slicing">slicing</option>
+                    <option value="integration">integration</option>
+                    <option value="frontend">frontend</option>
+                    <option value="backend">backend</option>
+                    <option value="other">other</option>
+                    <option value="meeting">meeting</option>
+                  </select>
+                </div>
+                <div class="form-group onlyfor onlyfor-macro"><label for="raised_display_output"><input id="raised_display_output" type="checkbox" name="raised_display_outout"> Display output?</label></div>
+                <div class="form-group onlyfor onlyfor-macro onlyfor-type">
+                  <label for="raised_args">Arguments</label>
+                  <textarea id="raised_args" name="raised_args" class="form-control"></textarea>
+                </div>
+                <div class="form-group onlyfor onlyfor-pomodoro">
+                  <label for="raised_duration">Duration</label>
+                  <input type="text" id="raised_duration" class="form-control" name="raised_duration" value="">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <button type="button">Save</button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -73,10 +404,80 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script>
+      var currentKeys = null;
       function editKey(e) {
+        $('form').show();
+        var k = e.target.innerText;
+        var rk = "K1"+k[1];
+        currentKeys = [k, rk];
 
-      }
+        $.getJSON("/keys?k="+k).success(function(r){
+          $('#base_type').val(r.type);
+          displayFields({target: $('#base_type')[0]});
+          $('#base_id').val(r.id);
+          $('#base_profile').val(r.profile);
+          if(r.display_output) {
+            $('#base_display_output').attr("checked", "checked");
+          } else {
+            $('#base_display_output').removeAttr("checked");
+          }
+          $('#base_args').val((r.args || []).join("\n"));
+          $('#base_duration').val(r.duration.toString());
+        }).error(function() {
+          $('#base_type').val("");
+          displayFields({target: $('#base_type')[0]});
+        });
+        $.getJSON("/keys?k="+rk).success(function(r){
+          $('#raised_type').val(r.type);
+          displayFields({target: $('#raised_type')[0]});
+          $('#raised_id').val(r.id);
+          $('#raised_profile').val(r.profile);
+          if(r.display_output) {
+            $('#raised_display_output').attr("checked", "checked");
+          } else {
+            $('#raised_display_output').removeAttr("checked");
+          }
+          $('#raised_args').val((r.args || []).join("\n"));
+          $('#raised_duration').val(r.duration.toString());
+        }).error(function() {
+          $('#raised_type').val("");
+          displayFields({target: $('#raised_type')[0]});
+        });
+      };
+
+      function saveKeys() {
+        var o = {
+          type: $('#base_type').val(),
+          id: parseInt($('#base_id').val()),
+          label: $("#base_id option:selected").text(),
+          profile: $('#base_profile').val(),
+          display_output: $('#base_display_output').attr('checked') == 'checked',
+          args: $('#base_args').val().split("\n"),
+          duration: parseInt($('#base_duration').val(), 10)
+        };
+        $.post("/keys?k="+currentKeys[0], o);
+        o = {
+          type: $('#raised_type').val(),
+          id: parseInt($('#raised_id').val()),
+          label: $("#raised_id option:selected").text(),
+          profile: $('#raised_profile').val(),
+          display_output: $('#raised_display_output').attr('checked') == 'checked',
+          args: $('#raised_args').val().split("\n"),
+          duration: parseInt($('#raised_duration').val(), 10)
+        };
+        $.post("/keys?k="+currentKeys[1], o);
+      };
+      function displayFields(e) {
+        var cnt = $('#'+((e.target.id.indexOf('base') >= 0) ? 'base' : 'raised'));
+        cnt.find('.onlyfor').hide();
+        cnt.find('.onlyfor-'+$(e.target).val().toLowerCase()).show();
+      };
       $('.keys li').click(editKey);
+      $('#base_type, #raised_type').change(displayFields);
+
+      $('form,.onlyfor').hide();
+      $('.onlyfor-track').show();
+      $('button').click(saveKeys);
     </script>
   </body>
 </html>
