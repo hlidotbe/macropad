@@ -82,16 +82,36 @@ func loadConfig() *map[string]*actionConfig {
 	}
 	defer file.Close()
 	s, _ := file.Stat()
-	buf := make([]byte, s.Size())
-	if _, err = file.Read(buf); err != nil {
-		log.Fatal(err)
+	cfg := make(map[string]*actionConfig)
+	if s.Size() > 0 {
+		buf := make([]byte, s.Size())
+		if _, err = file.Read(buf); err != nil {
+			log.Fatal(err)
+		}
+		err = yaml.Unmarshal(buf, &cfg)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-	cfg := new(map[string]*actionConfig)
-	err = yaml.Unmarshal(buf, cfg)
+	return &cfg
+}
+
+func saveConfig() {
+	u, err := user.Current()
 	if err != nil {
 		log.Fatal(err)
 	}
-	return cfg
+	configFile := path.Join(u.HomeDir, ".macropad.yml")
+	file, err := os.OpenFile(configFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	bytes, err := yaml.Marshal(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	file.Write(bytes)
 }
 
 //*
