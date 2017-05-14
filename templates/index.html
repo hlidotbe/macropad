@@ -455,7 +455,7 @@
           args: $('#base_args').val().split("\n"),
           duration: parseInt($('#base_duration').val(), 10)
         };
-        $.post("/keys?k="+currentKeys[0], o);
+        $.post("/keys?k="+currentKeys[0], JSON.stringify(o));
         o = {
           type: $('#raised_type').val(),
           id: parseInt($('#raised_id').val()),
@@ -465,7 +465,7 @@
           args: $('#raised_args').val().split("\n"),
           duration: parseInt($('#raised_duration').val(), 10)
         };
-        $.post("/keys?k="+currentKeys[1], o);
+        $.post("/keys?k="+currentKeys[1], JSON.stringify(o));
       };
       function displayFields(e) {
         var cnt = $('#'+((e.target.id.indexOf('base') >= 0) ? 'base' : 'raised'));

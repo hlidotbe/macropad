@@ -149,21 +149,25 @@ func openPort() io.ReadWriter {
 
 func setupKeys() {
 	for key, ac := range *config {
-		switch ac.Type {
-		case "Track":
-			orch.RegisterAction(key, pad.NewActionTrack(key, orch.Com, auxiliumClient, ac.Label, ac.ID, ac.Profile))
-			break
-		case "Type":
-			orch.RegisterAction(key, pad.NewActionType(key, orch.Com, ac.Args...))
-			break
-		case "Macro":
-			orch.RegisterAction(key, pad.NewActionMacro(key, orch.Com, ac.DisplayOutput, ac.Args...))
-			break
-		case "Pomodoro":
-			orch.RegisterAction(key, pad.NewActionPomodoro(key, orch.Com, time.Duration(ac.Duration)*time.Minute))
-			break
-		}
+		setupKey(key, ac)
 		log.Printf("%v: %v\n", key, ac)
+	}
+}
+
+func setupKey(key string, ac *actionConfig) {
+	switch ac.Type {
+	case "Track":
+		orch.RegisterAction(key, pad.NewActionTrack(key, orch.Com, auxiliumClient, ac.Label, ac.ID, ac.Profile))
+		break
+	case "Type":
+		orch.RegisterAction(key, pad.NewActionType(key, orch.Com, ac.Args...))
+		break
+	case "Macro":
+		orch.RegisterAction(key, pad.NewActionMacro(key, orch.Com, ac.DisplayOutput, ac.Args...))
+		break
+	case "Pomodoro":
+		orch.RegisterAction(key, pad.NewActionPomodoro(key, orch.Com, time.Duration(ac.Duration)*time.Minute))
+		break
 	}
 }
 
@@ -178,10 +182,25 @@ func handleKeys(response http.ResponseWriter, request *http.Request) {
 		bytes, _ := json.Marshal(ac)
 		response.Write(bytes)
 	} else {
+		defer request.Body.Close()
 		ac := (*config)[k]
 		if ac != nil {
-			// TODO: Unregister action
+			log.Printf("Unregistering %v\n", k)
+			orch.UnregisterAction(k)
 		}
-		(*config)[k] = nil
+		decoder := json.NewDecoder(request.Body)
+		ac = new(actionConfig)
+		err := decoder.Decode(ac)
+		if err != nil {
+			log.Println(err)
+			response.WriteHeader(500)
+			return
+		}
+		(*config)[k] = ac
+		log.Printf("Setting up %v\n", ac)
+		if len(ac.Type) > 0 {
+			setupKey(k, ac)
+		}
+		saveConfig()
 	}
 }

@@ -78,6 +78,16 @@ func (o *Orchestrator) RegisterAction(key string, a Action) {
 	o.actions[key] = a
 }
 
+// UnregisterAction for given key, stopping it if it exists
+func (o *Orchestrator) UnregisterAction(key string) Action {
+	a := o.actions[key]
+	if a != nil {
+		a.Stop()
+		delete(o.actions, key)
+	}
+	return a
+}
+
 func (o *Orchestrator) notifyIfNeeded(msg ActionMessage) {
 	if len(msg.Notify) == 0 {
 		return

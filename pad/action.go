@@ -40,6 +40,7 @@ const (
 // Action describe what a keypress should do
 type Action interface {
 	Execute() error
+	Stop()
 }
 
 // Concrete actions
@@ -69,6 +70,10 @@ func (a *actionType) Execute() error {
 	return nil
 }
 
+func (a *actionType) Stop() {
+
+}
+
 type actionMacro struct {
 	name          string
 	out           chan<- ActionMessage
@@ -96,6 +101,10 @@ func (a *actionMacro) Execute() error {
 		a.out <- ActionMessage{ActionName: a.name, Notify: string(out), State: 0}
 	}
 	return nil
+}
+
+func (a *actionMacro) Stop() {
+
 }
 
 type actionPomodoro struct {
@@ -140,6 +149,12 @@ func (a *actionPomodoro) Execute() error {
 		a.out <- ActionMessage{ActionName: a.name, Progress: 1, State: 0}
 	}
 	return nil
+}
+
+func (a *actionPomodoro) Stop() {
+	if a.pomodoro != nil && a.pomodoro.IsRunning() {
+		a.pomodoro.Cancel()
+	}
 }
 
 func (a *actionPomodoro) readProgress() {
@@ -203,6 +218,15 @@ func (a *actionTrack) Execute() error {
 		a.out <- ActionMessage{ActionName: a.name, Notify: fmt.Sprintf("Stopped tracking on %s", a.projectLabel), State: -1}
 	}
 	return err
+}
+
+func (a *actionTrack) Stop() {
+	if a.currentTime != nil {
+		a.currentTime.Status = "pending"
+		a.client.TimeTrack.Update(a.currentTime)
+		a.currentTime = nil
+		a.out <- ActionMessage{ActionName: a.name, Notify: fmt.Sprintf("Stopped tracking on %s", a.projectLabel), State: -1}
+	}
 }
 
 // ActionMessage is sent by the Action on the side channel when an asynchronous operation happens
